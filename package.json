@@ -1,0 +1,14 @@
+{
+  "name": "wait-and-collect",
+  "version": "0.0.0",
+  "description": "wait and collect data before sending it",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jon Andersson",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "request": "~2.30.0"
+  }
+}
