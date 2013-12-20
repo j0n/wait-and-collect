@@ -10,6 +10,7 @@ exports.addPoint = function(id, options) {
   }
   options.addMethod = options.addMethod || 'array';
   points[id] = {
+    collectin: false,
     options: options,
     collecting: false,
     data: options.addMethod === 'array'? []: {}
@@ -17,12 +18,7 @@ exports.addPoint = function(id, options) {
 
 }
 exports.add = function(id, data, key) {
-  console.log('ADDING', id, data);
-  if (points[id].timeoutId) {
-    clearTimeout(points[id].timeoutId);
-  }
   if (points[id].options.addMethod === 'additionByKey') {
-    console.log(points[id].data[data]);
     if (typeof points[id].data[data] === 'undefined') {
       points[id].data[data] = 0;
     }
@@ -31,26 +27,47 @@ exports.add = function(id, data, key) {
   else {
     points[id].data.push(data);
   }
-  points[id].timeoutId = setTimeout(
-    function(id) {
-      send(id);
-    }.bind(this, id),
-    points[id].options.time || 5000
-  );
+  if (!points[id].collecting) {
+    points[id].collecting = true;
+    points[id].timeoutId = setTimeout(
+      function(id) {
+        send(id);
+      }.bind(this, id),
+      points[id].options.time || 5000
+    );
+  }
+}
+exports.subtract = function(id, data) {
+  if (points[id].options.addMethod === 'additionByKey') {
+    if (typeof points[id].data[data] === 'undefined') {
+      points[id].data[data] = 0;
+    }
+    points[id].data[data] -= 1;
+  }
+  if (!points[id].collecting) {
+    points[id].collecting = true;
+    points[id].timeoutId = setTimeout(
+      function(id) {
+        send(id);
+      }.bind(this, id),
+      points[id].options.time || 5000
+    );
+  }
 }
 
 var send = function(id) {
-  console.log('sending', points[id].data);
+  points[id].collecting = false;
   request({
     url: points[id].options.url,
     method: points[id].options.method || 'POST',
-    data: points[id].data
+    json: true,
+    body: points[id].data
   },
   function(err, res, data) {
     if (err) {
       throw err;
     }
-    console.log('data sent');
   });
-  points[id].data = [];
+
+  points[id].data = points[id].options.addMethod === 'array'? []: {}
 }
