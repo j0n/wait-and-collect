@@ -65,9 +65,8 @@ var send = function(id) {
   },
   function(err, res, data) {
     if (err) {
-      throw err;
+      console.log('Error when trying to call url', points[id].options.url);
     }
   });
-
   points[id].data = points[id].options.addMethod === 'array'? []: {}
 }

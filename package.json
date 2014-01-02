@@ -1,6 +1,6 @@
 {
   "name": "wait-and-collect",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "wait and collect data before sending it",
   "main": "index.js",
   "scripts": {
